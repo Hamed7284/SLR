@@ -13,15 +13,18 @@ jobs:
         with:
           flutter-version: '3.19.0'
           channel: 'stable'
-      - run: flutter pub get || true
-      - name: Fix gradlew permission
-        run: chmod +x android/gradlew
-      - name: Create local.properties
+      - name: Create Flutter project and copy files
         run: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
-          echo "flutter.sdk=$(which flutter | sed 's/bin\/flutter//')" >> android/local.properties
-      - run: flutter build apk --release
+          flutter create -t app tempapp
+          cp -r android/app/src/main/kotlin tempapp/android/app/src/main/kotlin
+          cp android/app/src/main/AndroidManifest.xml tempapp/android/app/src/main/AndroidManifest.xml
+          cp android/AndroidManifest.xml tempapp/android/AndroidManifest.xml
+          cp pubspec.yaml tempapp/pubspec.yaml
+          cp -r lib/* tempapp/lib/
+          cd tempapp
+          flutter pub get || true
+          flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
           name: app-release
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: tempapp/build/app/outputs/flutter-apk/app-release.apk
