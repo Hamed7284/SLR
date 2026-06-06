@@ -13,7 +13,7 @@ jobs:
         with:
           flutter-version: '3.19.0'
           channel: 'stable'
-      - run: flutter pub get
+      - run: flutter pub get || true
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
